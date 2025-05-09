@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Oden Ordering</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-orange-50 font-sans">
   <div class="max-w-4xl mx-auto p-6">
     <h1 class="text-3xl font-bold text-center text-orange-700 mb-6">🧡 Oden Ordering 🧡</h1>
@@ -75,7 +77,7 @@
 
     const setItems = {
       A: ["Instant Noodle", "Fish Cake", "Crab Stick", "Egg"],
-      B: ["Fish Cake", "Fuchuk", "White Radish","Egg"],
+      B: ["Fish Cake", "Fuchuk", "White Radish", "Egg"],
       C: ["Instant Noodle", "Fish Cake", "Crab Stick", "Fuchuk", "Egg"],
       D: ["Fish Ball", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish"],
       E: ["Instant Noodle", "Fish Cake", "Fuchuk", "Enoki Mushroom", "Cheese Tofu", "Egg"],
@@ -97,11 +99,11 @@
     ];
 
     const drinkItems = [
-      { name: 'Sprite', price: 3 },
-      { name: 'Coca-Cola', price: 3 },
-      { name: 'F&N Soda', price: 3 },
-      { name: 'A&W', price: 3 },
-      { name: 'Pepsi', price: 3 },
+      { name: 'Sprite', basePrice: 3, setPrice: 2 },
+      { name: 'Coca-Cola', basePrice: 3, setPrice: 2 },
+      { name: 'F&N Soda', basePrice: 3, setPrice: 2 },
+      { name: 'A&W', basePrice: 3, setPrice: 2 },
+      { name: 'Pepsi', basePrice: 3, setPrice: 2 },
     ];
 
     function selectSet(name, price, button) {
@@ -129,14 +131,17 @@
       document.getElementById("setItemsDisplay").innerHTML = `<strong>Included Items:</strong><br>${display}`;
     }
 
-    function createItemControls(containerId, items) {
+    function createItemControls(containerId, items, isDrink = false) {
       const container = document.getElementById(containerId);
       items.forEach(item => {
         const wrapper = document.createElement('div');
         wrapper.className = 'flex justify-between items-center bg-white p-2 rounded shadow';
+        wrapper.dataset.name = item.name;
 
         const label = document.createElement('span');
-        label.textContent = `${item.name} (RM${item.price})`;
+        const price = isDrink && selectedSet ? item.setPrice : (item.price || item.basePrice);
+        label.textContent = `${item.name} (RM${price})`;
+        label.className = 'item-label';
 
         const controls = document.createElement('div');
         controls.className = 'flex items-center space-x-2';
@@ -174,14 +179,28 @@
       });
     }
 
+    function updateDrinkLabels() {
+      document.querySelectorAll('#drink-items > div').forEach(wrapper => {
+        const name = wrapper.dataset.name;
+        const item = drinkItems.find(d => d.name === name);
+        const label = wrapper.querySelector('.item-label');
+        const price = selectedSet ? item.setPrice : item.basePrice;
+        label.textContent = `${item.name} (RM${price})`;
+      });
+    }
+
     function updateTotalPrice() {
       let total = selectedSetPrice;
-      const allItems = foodItems.concat(drinkItems);
-      for (const item in additionalItems) {
-        const price = allItems.find(i => i.name === item).price;
-        total += price * additionalItems[item];
-      }
+      foodItems.forEach(item => {
+        total += item.price * (additionalItems[item.name] || 0);
+      });
+      drinkItems.forEach(item => {
+        const count = additionalItems[item.name] || 0;
+        const price = selectedSet ? item.setPrice : item.basePrice;
+        total += count * price;
+      });
       document.getElementById('totalPrice').textContent = total.toFixed(2);
+      updateDrinkLabels();
     }
 
     function submitOrder() {
@@ -195,32 +214,29 @@
         hour: '2-digit', minute: '2-digit', hour12: true
       }).replace(',', '');
 
-      let message = `🧡 Oden Order 🧡\n👤 Name: ${name}\n🍲 Flavour: ${soupFlavour}`;
-      if (selectedSet) {
-        message += `\n🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})`;
-        message += `\n🧾 Included Items:\n${setItems[selectedSet].map(i => `• ${i}`).join('\n')}`;
-      }
+      let message = `🧡 Oden Order 🧡%0A👤 Name: ${name}%0A🍲 Flavour: ${soupFlavour}`;
+      if (selectedSet) message += `%0A🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})`;
 
-      message += `\n\n--- Additional Items ---`;
+      message += `%0A%0A--- Items ---`;
       const allItems = foodItems.concat(drinkItems);
       for (const item in additionalItems) {
         if (additionalItems[item] > 0) {
-          message += `\n• ${item} x${additionalItems[item]}`;
+          message += `%0A• ${item} x${additionalItems[item]}`;
         }
       }
 
       const total = parseFloat(document.getElementById('totalPrice').textContent);
-      message += `\n\n💰 Total: RM${total.toFixed(2)}`;
-      message += `\n🕒 Order Time: ${dateTime}`;
+      message += `%0A%0A💰 Total: RM${total.toFixed(2)}`;
+      message += `%0A🕒 Order Time: ${dateTime}`;
 
       const phone = "01115701783";
-      const encoded = encodeURIComponent(message);
-      const url = `https://wa.me/6${phone}?text=${encoded}`;
+      const url = `https://wa.me/6${phone}?text=${message}`;
       window.open(url, '_blank');
     }
 
     createItemControls('food-items', foodItems);
-    createItemControls('drink-items', drinkItems);
+    createItemControls('drink-items', drinkItems, true);
   </script>
 </body>
+
 </html>
