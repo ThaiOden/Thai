@@ -22,8 +22,7 @@
     <!-- Soup Flavour -->
     <div class="mb-6">
       <label class="block text-lg font-semibold mb-2 text-orange-800">Soup Flavour</label>
-      <select id="soupFlavour"
-        class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500">
+      <select id="soupFlavour" class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500">
         <option value="Original Flavour">Original Flavour</option>
         <option value="Tom Yam">Tom Yam</option>
       </select>
@@ -33,13 +32,13 @@
     <div class="mb-6">
       <h2 class="text-2xl font-bold text-orange-700 mb-4">🍢 Choose Your Set</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <button onclick="selectSet('A', 6, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set A (RM7)</button>
-        <button onclick="selectSet('B', 6, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set B (RM7)</button>
-        <button onclick="selectSet('C', 8, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set C (RM9)</button>
-        <button onclick="selectSet('D', 8, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set D (RM9)</button>
-        <button onclick="selectSet('E', 10, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set E (RM11)</button>
-        <button onclick="selectSet('F', 10, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set F (RM11)</button>
-        <button onclick="selectSet('Premium', 15, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Premium Set (RM18)</button>
+        <button onclick="selectSet('A', 7, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set A (RM7)</button>
+        <button onclick="selectSet('B', 7, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set B (RM7)</button>
+        <button onclick="selectSet('C', 9, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set C (RM9)</button>
+        <button onclick="selectSet('D', 9, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set D (RM9)</button>
+        <button onclick="selectSet('E', 11, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set E (RM11)</button>
+        <button onclick="selectSet('F', 11, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Set F (RM11)</button>
+        <button onclick="selectSet('Premium', 18, this)" class="set-button bg-white p-4 rounded shadow hover:bg-orange-100">Premium Set (RM18)</button>
       </div>
       <button onclick="clearSetSelection()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Clear Set Selection</button>
       <div id="setItemsDisplay" class="mt-4 text-orange-800 font-medium"></div>
@@ -57,16 +56,22 @@
       </div>
     </div>
 
-    <!-- Total Price -->
-    <div class="text-right text-xl font-bold text-orange-700 mb-6">
-      💰 Total: RM<span id="totalPrice">0.00</span>
+    <!-- Pickup Date and Time -->
+    <div class="mb-6">
+      <label for="pickupDate" class="block text-lg font-semibold mb-2 text-orange-800">📅 Pickup Date</label>
+      <input type="date" id="pickupDate"
+        class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500" required />
     </div>
 
-    <!-- Pickup Time -->
     <div class="mb-6">
       <label for="pickupTime" class="block text-lg font-semibold mb-2 text-orange-800">⏰ Pickup Time</label>
       <input type="time" id="pickupTime"
         class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500" required />
+    </div>
+
+    <!-- Total Price -->
+    <div class="text-right text-xl font-bold text-orange-700 mb-6">
+      💰 Total: RM<span id="totalPrice">0.00</span>
     </div>
 
     <!-- Submit Order -->
@@ -90,7 +95,7 @@
       D: ["Fish Ball", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish"],
       E: ["Instant Noodle", "Fish Cake", "Fuchuk", "Enoki Mushroom", "Cheese Tofu", "Egg"],
       F: ["Crab Stick", "Fish Ball", "Enoki Mushroom", "Seafood Tofu", "Egg", "White Radish"],
-      Premium: ["Instant Noodle", "Fish Cake", "Fuchuk", "Crab Stick", "Fish Ball", "Seafood Tofu", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish", "1 Drink"]
+      Premium: ["Instant Noodle", "Fish Cake", "Fuchuk", "Crab Stick", "Fish Ball", "Seafood Tofu", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish","1 Drink"]
     };
 
     const foodItems = [
@@ -214,9 +219,10 @@
     function submitOrder() {
       const name = document.getElementById('customerName').value.trim();
       const soupFlavour = document.getElementById('soupFlavour').value;
+      const pickupDate = document.getElementById('pickupDate').value;
       const pickupTime = document.getElementById('pickupTime').value;
       if (!name) return alert("Please enter your name!");
-      if (!pickupTime) return alert("Please select a pickup time!");
+      if (!pickupDate || !pickupTime) return alert("Please select a pickup date and time!");
 
       const now = new Date();
       const dateTime = now.toLocaleString('en-GB', {
@@ -237,6 +243,7 @@
 
       const total = parseFloat(document.getElementById('totalPrice').textContent);
       message += `%0A%0A💰 Total: RM${total.toFixed(2)}`;
+      message += `%0A📅 Pickup Date: ${pickupDate}`;
       message += `%0A⏰ Pickup Time: ${pickupTime}`;
       message += `%0A🕒 Order Time: ${dateTime}`;
 
