@@ -1,0 +1,183 @@
+<script>
+  let selectedSet = null;
+  let selectedSetPrice = 0;
+  let activeButton = null;
+  let additionalItems = {};
+
+  const setItems = {
+    A: ["Instant Noodle", "Fish Cake", "Crab Stick", "Egg"],
+    B: ["Fish Cake", "Fuchuk", "White Radish","Egg"],
+    C: ["Instant Noodle", "Fish Cake", "Crab Stick", "Fuchuk", "Egg"],
+    D: ["Fish Ball", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish"],
+    E: ["Instant Noodle", "Fish Cake", "Fuchuk", "Enoki Mushroom", "Cheese Tofu", "Egg"],
+    F: ["Crab Stick", "Fish Ball", "Enoki Mushroom", "Seafood Tofu", "Egg", "White Radish"],
+    Premium: ["Instant Noodle", "Fish Cake", "Fuchuk", "Crab Stick", "Fish Ball", "Seafood Tofu", "Enoki Mushroom", "Cheese Tofu", "Egg", "White Radish"]
+  };
+
+  const foodItems = [
+    { name: 'Instant Noodle', price: 1 },
+    { name: 'Fish Cake', price: 1 },
+    { name: 'Fuchuk', price: 1 },
+    { name: 'Crab Stick', price: 1 },
+    { name: 'Fish Ball', price: 2 },
+    { name: 'Seafood Tofu', price: 2 },
+    { name: 'Enoki Mushroom', price: 1 },
+    { name: 'Cheese Tofu', price: 2 },
+    { name: 'Egg', price: 1 },
+    { name: 'White Radish', price: 2 },
+  ];
+
+  const drinkItems = [
+    { name: 'Sprite', price: 3 },
+    { name: 'Coca-Cola', price: 3 },
+    { name: 'F&N Soda', price: 3 },
+    { name: 'A&W', price: 3 },
+    { name: 'Pepsi', price: 3 },
+  ];
+
+  function selectSet(name, price, button) {
+    selectedSet = name;
+    selectedSetPrice = price;
+    if (activeButton) activeButton.classList.remove('bg-orange-200');
+    button.classList.add('bg-orange-200');
+    activeButton = button;
+    showSetItems(name);
+    updateTotalPrice();
+    updateLabels(); // update drink prices visually
+  }
+
+  function clearSetSelection() {
+    selectedSet = null;
+    selectedSetPrice = 0;
+    if (activeButton) activeButton.classList.remove('bg-orange-200');
+    activeButton = null;
+    document.getElementById("setItemsDisplay").innerHTML = "";
+    updateTotalPrice();
+    updateLabels(); // update drink prices visually
+  }
+
+  function showSetItems(name) {
+    const items = setItems[name] || [];
+    const display = items.map(item => `• ${item}`).join("<br>");
+    document.getElementById("setItemsDisplay").innerHTML = `<strong>Included Items:</strong><br>${display}`;
+  }
+
+  const labelRefs = {}; // Store label spans to update text dynamically
+
+  function createItemControls(containerId, items) {
+    const container = document.getElementById(containerId);
+    items.forEach(item => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex justify-between items-center bg-white p-2 rounded shadow';
+
+      const label = document.createElement('span');
+      labelRefs[item.name] = label;
+
+      const updateLabel = () => {
+        let price = item.price;
+        if (drinkItems.find(d => d.name === item.name)) {
+          price = selectedSet ? 2 : 3;
+        }
+        label.textContent = `${item.name} (RM${price})`;
+      };
+
+      const controls = document.createElement('div');
+      controls.className = 'flex items-center space-x-2';
+
+      const minus = document.createElement('button');
+      minus.textContent = '-';
+      minus.className = 'bg-orange-400 text-white w-6 h-6 rounded';
+
+      const plus = document.createElement('button');
+      plus.textContent = '+';
+      plus.className = 'bg-orange-500 text-white w-6 h-6 rounded';
+
+      const count = document.createElement('span');
+      count.textContent = '0';
+
+      additionalItems[item.name] = 0;
+
+      minus.onclick = () => {
+        if (additionalItems[item.name] > 0) {
+          additionalItems[item.name]--;
+          count.textContent = additionalItems[item.name];
+          updateTotalPrice();
+          updateLabel();
+        }
+      };
+
+      plus.onclick = () => {
+        additionalItems[item.name]++;
+        count.textContent = additionalItems[item.name];
+        updateTotalPrice();
+        updateLabel();
+      };
+
+      updateLabel();
+      controls.append(minus, count, plus);
+      wrapper.append(label, controls);
+      container.appendChild(wrapper);
+    });
+  }
+
+  function updateLabels() {
+    Object.keys(labelRefs).forEach(name => {
+      const label = labelRefs[name];
+      let price = foodItems.find(f => f.name === name)?.price;
+      if (drinkItems.find(d => d.name === name)) {
+        price = selectedSet ? 2 : 3;
+      }
+      label.textContent = `${name} (RM${price})`;
+    });
+  }
+
+  function updateTotalPrice() {
+    let total = selectedSetPrice;
+    const isSetSelected = !!selectedSet;
+
+    for (const item in additionalItems) {
+      let price = 0;
+      if (foodItems.find(f => f.name === item)) {
+        price = foodItems.find(f => f.name === item).price;
+      } else if (drinkItems.find(d => d.name === item)) {
+        price = isSetSelected ? 2 : 3;
+      }
+      total += price * additionalItems[item];
+    }
+
+    document.getElementById('totalPrice').textContent = total.toFixed(2);
+  }
+
+  function submitOrder() {
+    const name = document.getElementById('customerName').value.trim();
+    const soupFlavour = document.getElementById('soupFlavour').value;
+    if (!name) return alert("Please enter your name!");
+
+    const now = new Date();
+    const dateTime = now.toLocaleString('en-GB', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true
+    }).replace(',', '');
+
+    let message = `🧡 Oden Order 🧡%0A👤 Name: ${name}%0A🍲 Flavour: ${soupFlavour}`;
+    if (selectedSet) message += `%0A🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})`;
+
+    message += `%0A%0A--- Items ---`;
+    for (const item in additionalItems) {
+      if (additionalItems[item] > 0) {
+        message += `%0A• ${item} x${additionalItems[item]}`;
+      }
+    }
+
+    const total = parseFloat(document.getElementById('totalPrice').textContent);
+    message += `%0A%0A💰 Total: RM${total.toFixed(2)}`;
+    message += `%0A🕒 Order Time: ${dateTime}`;
+
+    const phone = "01115701783";
+    const url = `https://wa.me/6${phone}?text=${message}`;
+    window.open(url, '_blank');
+  }
+
+  createItemControls('food-items', foodItems);
+  createItemControls('drink-items', drinkItems);
+</script>
