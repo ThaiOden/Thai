@@ -235,18 +235,18 @@
       let message = `🧡 Oden Order 🧡\n👤 Name: ${name}\n🍲 Flavour: ${soupFlavour}\n`;
       if (selectedSet) message += `🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})\n`;
 
-      message += `--- Items ---`;
+      message += `\n--- Items ---\n`;
       for (const item in additionalItems) {
         if (additionalItems[item] > 0) {
-          message += `\n• ${item} x${additionalItems[item]}\n`;
+          message += `• ${item} x${additionalItems[item]}`;
         }
       }
 
       const total = parseFloat(document.getElementById('totalPrice').textContent);
-      message += `\n %0A%0A💰 Total: RM${total.toFixed(2)}\n`;
-      message += `%0A📅 Pickup Date: ${pickupDate}\n`;
-      message += `%0A⏰ Pickup Time: ${pickupTime}\n`;
-      message += `%0A🕒 Order Time: ${dateTime}`;
+      message += `💰 Total: RM${total.toFixed(2)}\n`;
+      message += `📅 Pickup Date: ${pickupDate}\n`;
+      message += `⏰ Pickup Time: ${pickupTime}\n`;
+      message += `🕒 Order Time: ${dateTime}`;
 
       const phone = "01115701783";
       const url = `https://wa.me/6${phone}?text=${encodeURIComponent(message)}`;
