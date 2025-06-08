@@ -238,14 +238,14 @@
       message += `%0A%0A--- Items ---`;
       for (const item in additionalItems) {
         if (additionalItems[item] > 0) {
-          message += `%0A• ${item} x${additionalItems[item]}`;
+          message += `%0A• ${item} x${additionalItems[item]}\n`;
         }
       }
 
       const total = parseFloat(document.getElementById('totalPrice').textContent);
-      message += `%0A%0A💰 Total: RM${total.toFixed(2)}`;
-      message += `%0A📅 Pickup Date: ${pickupDate}`;
-      message += `%0A⏰ Pickup Time: ${pickupTime}`;
+      message += `\n %0A%0A💰 Total: RM${total.toFixed(2)}\n`;
+      message += `%0A📅 Pickup Date: ${pickupDate}\n`;
+      message += `%0A⏰ Pickup Time: ${pickupTime}\n`;
       message += `%0A🕒 Order Time: ${dateTime}`;
 
       const phone = "01115701783";
