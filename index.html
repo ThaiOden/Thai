@@ -23,7 +23,8 @@
     <div class="mb-6">
       <label class="block text-lg font-semibold mb-2 text-orange-800">Soup Flavour</label>
       <select id="soupFlavour" class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500">
-      <option value="Tom Yam">Tom Yam</option>
+        <option value="Original Flavour">Original Flavour</option>
+        <option value="Tom Yam">Tom Yam</option>
       </select>
     </div>
 
@@ -67,7 +68,7 @@
       <label for="pickupTime" class="block text-lg font-semibold mb-2 text-orange-800">⏰ Pickup Time</label>
       <input type="time" id="pickupTime"
         class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-orange-500" 
-        min="08:00" max="17:00" required />
+        min="10:00" max="17:00" required />
     </div>
 
     <!-- Total Price -->
@@ -141,8 +142,8 @@
 
     function showSetItems(name) {
       const items = setItems[name] || [];
-      const display = items.map(item => `• ${item}`).join("<br>");
-      document.getElementById("setItemsDisplay").innerHTML = `<strong>Included Items:</strong><br>${display}`;
+      const display = items.map(item => • ${item}).join("<br>");
+      document.getElementById("setItemsDisplay").innerHTML = <strong>Included Items:</strong><br>${display};
     }
 
     function createItemControls(containerId, items, isDrink = false) {
@@ -154,7 +155,7 @@
 
         const label = document.createElement('span');
         const price = isDrink && selectedSet ? item.setPrice : (item.price || item.basePrice);
-        label.textContent = `${item.name} (RM${price})`;
+        label.textContent = ${item.name} (RM${price});
         label.className = 'item-label';
 
         const controls = document.createElement('div');
@@ -199,7 +200,7 @@
         const item = drinkItems.find(d => d.name === name);
         const label = wrapper.querySelector('.item-label');
         const price = selectedSet ? item.setPrice : item.basePrice;
-        label.textContent = `${item.name} (RM${price})`;
+        label.textContent = ${item.name} (RM${price});
       });
     }
 
@@ -231,25 +232,25 @@
         hour: '2-digit', minute: '2-digit', hour12: true
       }).replace(',', '');
 
-      let message = `🧡 Oden Order 🧡%0A👤 Name: ${name}%0A🍲 Flavour: ${soupFlavour}`;
-      if (selectedSet) message += `%0A🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})`;
+      let message = 🧡 Oden Order 🧡%0A👤 Name: ${name}%0A🍲 Flavour: ${soupFlavour};
+      if (selectedSet) message += %0A🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)});
 
-      message += `%0A%0A--- Items ---`;
+      message += %0A%0A--- Items ---;
       const allItems = foodItems.concat(drinkItems);
       for (const item in additionalItems) {
         if (additionalItems[item] > 0) {
-          message += `%0A• ${item} x${additionalItems[item]}`;
+          message += %0A• ${item} x${additionalItems[item]};
         }
       }
 
       const total = parseFloat(document.getElementById('totalPrice').textContent);
-      message += `%0A%0A💰 Total: RM${total.toFixed(2)}`;
-      message += `%0A📅 Pickup Date: ${pickupDate}`;
-      message += `%0A⏰ Pickup Time: ${pickupTime}`;
-      message += `%0A🕒 Order Time: ${dateTime}`;
+      message += %0A%0A💰 Total: RM${total.toFixed(2)};
+      message += %0A📅 Pickup Date: ${pickupDate};
+      message += %0A⏰ Pickup Time: ${pickupTime};
+      message += %0A🕒 Order Time: ${dateTime};
 
       const phone = "01115701783";
-      const url = `https://wa.me/6${phone}?text=${message}`;
+      const url = https://wa.me/6${phone}?text=${message};
       window.open(url, '_blank');
     }
 
