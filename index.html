@@ -232,13 +232,13 @@
         hour: '2-digit', minute: '2-digit', hour12: true
       }).replace(',', '');
 
-      let message = `🧡 Oden Order 🧡%0A👤 Name: ${name}%0A🍲 Flavour: ${soupFlavour}`;
-      if (selectedSet) message += `%0A🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})`;
+      let message = `🧡 Oden Order 🧡\n👤 Name: ${name}\n🍲 Flavour: ${soupFlavour}\n`;
+      if (selectedSet) message += `🍢 Set: ${selectedSet} (RM${selectedSetPrice.toFixed(2)})\n`;
 
-      message += `%0A%0A--- Items ---`;
+      message += `--- Items ---`;
       for (const item in additionalItems) {
         if (additionalItems[item] > 0) {
-          message += `%0A• ${item} x${additionalItems[item]}\n`;
+          message += `\n• ${item} x${additionalItems[item]}\n`;
         }
       }
 
